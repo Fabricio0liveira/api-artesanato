@@ -23,12 +23,12 @@ def _registrar_extensoes(app):
 
 
 def _registrar_controllers(app):
-    # "Controllers" no lugar de "blueprints de rotas" — mesma mecânica do
+    # "Routes/Controllers" no lugar de "blueprints de rotas" — mesma mecânica do
     # Flask (Blueprint), só que aqui cada arquivo é tratado como o C do MVC.
-    #from app.controllers.auth_controller import bp as auth_bp
+    from app.routes.auth_route import bp as auth_bp
     from app.routes.index import bp as health_bp
 
-    #app.register_blueprint(auth_bp, url_prefix="/auth")
+    app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(health_bp, url_prefix="/api")
     
 
