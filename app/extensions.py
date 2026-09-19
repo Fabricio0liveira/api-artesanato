@@ -7,13 +7,9 @@ dentro de `__init__.py`, teríamos um ciclo de import.
 """
 
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
+from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 
 db = SQLAlchemy()
-login_manager = LoginManager()
+jwt = JWTManager()
 migrate = Migrate()
-
-login_manager.login_view = "auth.login"
-login_manager.login_message = "Faça login para acessar essa página."
-login_manager.login_message_category = "warning"

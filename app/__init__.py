@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 
 from config import config
-from app.extensions import db, login_manager, migrate
+from app.extensions import db, migrate, jwt
 
 
 def create_app(config_name="default"):
@@ -18,9 +18,8 @@ def create_app(config_name="default"):
 
 def _registrar_extensoes(app):
     db.init_app(app)
-    login_manager.init_app(app)
     migrate.init_app(app, db)
-
+    jwt.init_app(app)
 
 def _registrar_controllers(app):
     # "Routes/Controllers" no lugar de "blueprints de rotas" — mesma mecânica do
