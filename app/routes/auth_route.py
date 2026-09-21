@@ -12,6 +12,7 @@ from flask_jwt_extended import (
     get_jwt_identity,
     jwt_required,
 )
+from app.schemas.user_schema import UserRegisterSchema, UserResponseSchema, UserLoginSchema, UserProfileSchema 
 
 from app.models.user import User
 from app.services import auth_service
@@ -24,21 +25,31 @@ bp = Blueprint('auth', __name__)
 @bp.post('/register')
 def register_user():
     data = request.get_json() or {}
+    schema = UserRegisterSchema()
+    
     try:
-        user = auth_service.register_user(data.get("email"), data.get("password"))
-    except ValidationError as e:
-        return jsonify({"Erro": str(e)}), 400
+        payload = schema.load(data)
+        user = auth_service.register_user(payload["email"], payload["password"])
     except UserAlreadyExists as e:
-        return jsonify({"Erro": str(e)}), 400
-
-    return jsonify({"id": user.id, "email": user.email}), 201
+            return jsonify({"Erro": str(e)}), 400
+    except Exception as exc:
+        return jsonify({"Erro": exc.messages}), 400
+    
+    return jsonify(UserResponseSchema().dump(user)), 201
 
 
 @bp.post('/login')
 def login():
     data = request.get_json() or {}
+    
+    schema = UserLoginSchema()
     try:
-        user = auth_service.authenticate(data.get("email"), data.get("password"))
+        payload = schema.load(data)
+    except Exception as exc:
+        return jsonify({"Erro": exc.messages}), 400
+
+    try:
+        user = auth_service.authenticate(payload["email"], payload["password"])
     except InvalidCredentials as e:
         return jsonify({"Erro": str(e)}), 401
 
@@ -48,10 +59,7 @@ def login():
         "access_token": access_token,
         "refresh_token": refresh_token,
         "token_type": "Bearer",
-        "user": {
-            "id": user.id,
-            "email": user.email
-        }
+        "user": UserResponseSchema().dump(user)
     }), 200
 
 
@@ -80,4 +88,4 @@ def me():
     if user is None:
         return jsonify({"Erro": "Usuário não encontrado."}), 404
 
-    return jsonify({"id": user.id, "email": user.email}), 200
+    return jsonify(UserProfileSchema().dump(user)), 200

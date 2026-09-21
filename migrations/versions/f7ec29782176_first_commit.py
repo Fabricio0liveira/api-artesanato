@@ -1,8 +1,8 @@
-"""create user
+"""First commit
 
-Revision ID: 365c486f1451
+Revision ID: f7ec29782176
 Revises: 
-Create Date: 2026-09-18 15:45:54.542219
+Create Date: 2026-09-20 10:51:07.623505
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '365c486f1451'
+revision = 'f7ec29782176'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -22,6 +22,8 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('email', sa.String(length=120), nullable=False),
     sa.Column('password_hash', sa.String(length=255), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     with op.batch_alter_table('usuarios', schema=None) as batch_op:
