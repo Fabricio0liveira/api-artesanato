@@ -16,7 +16,7 @@ from app.schemas.user_schema import UserRegisterSchema, UserResponseSchema, User
 
 from app.models.user import User
 from app.services import auth_service
-from app.services.exceptions import ValidationError, InvalidCredentials, UserAlreadyExists
+from app.services.exceptions import InvalidCredentials, UserAlreadyExists
 
 
 bp = Blueprint('auth', __name__)
@@ -30,10 +30,11 @@ def register_user():
     try:
         payload = schema.load(data)
         user = auth_service.register_user(payload["email"], payload["password"])
+    except Exception as exc:
+            return jsonify({"Erro": str(exc)}), 400
     except UserAlreadyExists as e:
             return jsonify({"Erro": str(e)}), 400
-    except Exception as exc:
-        return jsonify({"Erro": exc.messages}), 400
+    
     
     return jsonify(UserResponseSchema().dump(user)), 201
 
